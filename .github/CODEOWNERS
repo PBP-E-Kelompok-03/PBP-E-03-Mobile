@@ -1,0 +1,18 @@
+
+# PBP-E-03-Mobile CODEOWNERS
+
+# Default reviewers
+* @muhammadakbar58-rgb @kApitraf @dyahzhafira @khansanathania
+
+# Food & Restaurant - Kapitra
+/lib/features/food_restaurant/ @kApitraf
+
+# Location & Map - Akbar
+/lib/features/location_map/ @muhammadakbar58-rgb
+
+# Pickup / Order / Accounts - Dyah
+/lib/features/pickup_order/ @dyahzhafira
+/lib/features/accounts/ @dyahzhafira
+
+# Review & Rating - Khansa
+/lib/features/review_rating/ @khansanathania

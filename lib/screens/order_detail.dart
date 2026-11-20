@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../config.dart';
 import '../models/order.dart';
+import 'review_page.dart';
 
 class OrderDetailPage extends StatefulWidget {
   final Order order;
@@ -20,7 +21,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   final _kode = TextEditingController();
   late String _status = widget.order.status;
 
-  Future<void> _action(CookieRequest request, String action, {Map<String, dynamic>? body}) async {
+  Future<void> _action(CookieRequest request, String action,
+      {Map<String, dynamic>? body}) async {
     final response = await request.postJson(
       '$baseUrl/api/order/orders/${widget.order.id}/$action/',
       jsonEncode(body ?? {}),
@@ -34,6 +36,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     showSnack(context, response['message']);
   }
 
+  void _complete(CookieRequest request) {
+    final kode = _kode.text.trim().toUpperCase();
+    if (kode.isEmpty) {
+      showSnack(context, 'Kode pickup wajib diisi.');
+      return;
+    }
+    _action(request, 'complete', body: {'kode_pickup': kode});
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -44,14 +55,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Text(order.namaPaket, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text(order.namaPaket,
+              style:
+                  const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           Text('${order.restoran} - ${order.alamat}'),
           const SizedBox(height: 16),
           Text('Pembeli: ${order.pembeli}'),
           Text('Jumlah: ${order.jumlah} box'),
           Text('Total: ${rupiah(order.total)}'),
-          Text('Status: ${_status.toUpperCase()}'),
           Text('Berlaku sampai: ${order.kedaluwarsaPada.toString().substring(0, 16)}'),
+          Text(
+            'Status: ${statusLabel(_status)}',
+            style: TextStyle(color: statusColor(_status), fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
           if (isBuyer)
             Card(
@@ -61,30 +77,50 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   children: [
                     const Text('Kode Pickup'),
                     Text(order.kodePickup,
-                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 4)),
+                        style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 4)),
                   ],
                 ),
               ),
             ),
           const SizedBox(height: 16),
           if (isBuyer && _status == 'pending')
-            OutlinedButton(onPressed: () => _action(request, 'cancel'), child: const Text('Batalkan Pesanan')),
+            OutlinedButton(
+                onPressed: () => _action(request, 'cancel'),
+                child: const Text('Batalkan Pesanan')),
           if (!isBuyer && _status == 'pending')
-            FilledButton(onPressed: () => _action(request, 'confirm'), child: const Text('Terima Pesanan')),
+            FilledButton(
+                onPressed: () => _action(request, 'confirm'),
+                child: const Text('Terima Pesanan')),
           if (!isBuyer && (_status == 'pending' || _status == 'confirmed'))
-            OutlinedButton(onPressed: () => _action(request, 'reject'), child: const Text('Tolak Pesanan')),
+            OutlinedButton(
+                onPressed: () => _action(request, 'reject'),
+                child: const Text('Tolak Pesanan')),
           if (!isBuyer && _status == 'confirmed') ...[
             const SizedBox(height: 16),
             TextField(
               controller: _kode,
-              decoration: const InputDecoration(labelText: 'Kode pickup pembeli', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'Kode pickup pembeli',
+                  border: OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
-            FilledButton(
-              onPressed: () => _action(request, 'complete', body: {'kode_pickup': _kode.text}),
-              child: const Text('Selesaikan Pesanan'),
-            ),
+            FilledButton(onPressed: () => _complete(request), child: const Text('Selesaikan Pesanan')),
           ],
+          if (isBuyer && _status == 'completed')
+            FilledButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ReviewPage(orderId: order.id),
+                  ),
+                );
+              },
+              child: const Text('Beri Ulasan'),
+            ),
         ],
       ),
     );

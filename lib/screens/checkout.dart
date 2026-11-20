@@ -22,6 +22,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   static const _maxPerOrder = 3;
   int _jumlah = 1;
 
+  int get _maxQty => widget.box.stok < _maxPerOrder ? widget.box.stok : _maxPerOrder;
+
   Future<void> _submit(CookieRequest request) async {
     final response = await request.postJson(
       '$baseUrl/api/order/orders/',
@@ -42,7 +44,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     final box = widget.box;
-    final maxQty = box.stok < _maxPerOrder ? box.stok : _maxPerOrder;
     return Scaffold(
       appBar: AppBar(title: const Text('Checkout')),
       body: Padding(
@@ -56,6 +57,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             Text('Harga normal: ${rupiah(box.hargaNormal)}',
                 style: const TextStyle(decoration: TextDecoration.lineThrough)),
             Text('Harga diskon: ${rupiah(box.hargaDiskon)}'),
+            Text('Stok tersisa: ${box.stok}'),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -67,8 +69,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 Text('$_jumlah', style: const TextStyle(fontSize: 18)),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  onPressed: _jumlah < maxQty ? () => setState(() => _jumlah++) : null,
+                  onPressed: _jumlah < _maxQty ? () => setState(() => _jumlah++) : null,
                 ),
+                Text('(maks. $_maxPerOrder)'),
               ],
             ),
             const SizedBox(height: 8),
@@ -77,7 +80,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const Spacer(),
             SizedBox(
               width: double.infinity,
-              child: FilledButton(onPressed: () => _submit(request), child: const Text('Pesan Sekarang')),
+              child: FilledButton(
+                onPressed: _maxQty < 1 ? null : () => _submit(request),
+                child: Text(_maxQty < 1 ? 'Stok habis' : 'Pesan Sekarang'),
+              ),
             ),
           ],
         ),

@@ -11,7 +11,7 @@ class BoxListPage extends StatelessWidget {
 
   Future<List<Box>> _fetchBoxes(CookieRequest request) async {
     final response = await request.get('$baseUrl/api/order/boxes/');
-    return (response as List).map((e) => Box.fromJson(e)).toList();
+    return (response as List).map((json) => Box.fromJson(json)).toList();
   }
 
   @override
