@@ -68,7 +68,7 @@ TODO: tambahkan setelah Checkpoint 1.
 ## Menjalankan Aplikasi
 
 1. Jalankan situs Django: `python manage.py runserver` (butuh `10.0.2.2` di `ALLOWED_HOSTS` untuk emulator Android).
-2. Di repo ini, jalankan sekali: `flutter create . --project-name dibuang_sayang_mobile` untuk membuat folder platform, lalu `flutter pub get`.
+2. Jalankan `flutter pub get`.
 3. Atur `baseUrl` di `lib/config.dart` (`http://10.0.2.2:8000` untuk emulator, atau URL PWS).
 4. `flutter run`.
 

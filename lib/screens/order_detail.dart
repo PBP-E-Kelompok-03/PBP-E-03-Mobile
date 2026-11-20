@@ -36,6 +36,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     showSnack(context, response['message']);
   }
 
+  void _complete(CookieRequest request) {
+    final kode = _kode.text.trim().toUpperCase();
+    if (kode.isEmpty) {
+      showSnack(context, 'Kode pickup wajib diisi.');
+      return;
+    }
+    _action(request, 'complete', body: {'kode_pickup': kode});
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -54,9 +63,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           Text('Pembeli: ${order.pembeli}'),
           Text('Jumlah: ${order.jumlah} box'),
           Text('Total: ${rupiah(order.total)}'),
-          Text('Status: ${_status.toUpperCase()}'),
+          Text('Berlaku sampai: ${order.kedaluwarsaPada.toString().substring(0, 16)}'),
           Text(
-              'Berlaku sampai: ${order.kedaluwarsaPada.toString().substring(0, 16)}'),
+            'Status: ${statusLabel(_status)}',
+            style: TextStyle(color: statusColor(_status), fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
           if (isBuyer)
             Card(
@@ -96,11 +107,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   border: OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
-            FilledButton(
-              onPressed: () => _action(request, 'complete',
-                  body: {'kode_pickup': _kode.text}),
-              child: const Text('Selesaikan Pesanan'),
-            ),
+            FilledButton(onPressed: () => _complete(request), child: const Text('Selesaikan Pesanan')),
           ],
           if (isBuyer && _status == 'completed')
             FilledButton(
