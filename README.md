@@ -59,7 +59,7 @@ Endpoint modul Pick up / Order:
 
 ## Desain Figma
 
-TODO: tambahkan tautan Figma.
+- [Desain Figma - Dibuang Sayang Mobile](https://www.figma.com/design/48fKP28TcBghHzKF3TTgqu/PBP-Mobile?node-id=0-1&t=NBzfGPNA8b5vOkBU-1)
 
 ## Tautan APK
 
