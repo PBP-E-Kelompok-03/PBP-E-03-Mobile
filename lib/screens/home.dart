@@ -6,6 +6,7 @@ import '../config.dart';
 import 'login.dart';
 import 'order_list.dart';
 import 'placeholder_page.dart';
+import 'review_list_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,7 +23,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _logout(CookieRequest request) async {
     await request.logout('$baseUrl/api/auth/logout/');
     if (!mounted) return;
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => const LoginPage()));
   }
 
   @override
@@ -32,12 +34,19 @@ class _HomePageState extends State<HomePage> {
       const PlaceholderPage(title: 'Food & Restaurant', owner: 'Kapitra'),
       const PlaceholderPage(title: 'Location & Map', owner: 'Akbar'),
       const OrderListPage(),
-      const PlaceholderPage(title: 'Review & Rating', owner: 'Khansa'),
+      ReviewListPage(
+        onViewOrders: () {
+          setState(() => _index = 2);
+        },
+      ),
     ];
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles[_index]),
-        actions: [IconButton(icon: const Icon(Icons.logout), onPressed: () => _logout(request))],
+        actions: [
+          IconButton(
+              icon: const Icon(Icons.logout), onPressed: () => _logout(request))
+        ],
       ),
       body: pages[_index],
       bottomNavigationBar: NavigationBar(
@@ -46,7 +55,8 @@ class _HomePageState extends State<HomePage> {
         destinations: const [
           NavigationDestination(icon: Icon(Icons.restaurant), label: 'Food'),
           NavigationDestination(icon: Icon(Icons.map), label: 'Peta'),
-          NavigationDestination(icon: Icon(Icons.shopping_bag), label: 'Pesanan'),
+          NavigationDestination(
+              icon: Icon(Icons.shopping_bag), label: 'Pesanan'),
           NavigationDestination(icon: Icon(Icons.star), label: 'Ulasan'),
         ],
       ),
