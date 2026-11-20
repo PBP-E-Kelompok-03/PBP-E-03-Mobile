@@ -18,9 +18,11 @@ class MyApp extends StatelessWidget {
         title: 'Dibuang Sayang',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: kGreen, secondary: kOrange),
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: kGreen, secondary: kOrange),
           scaffoldBackgroundColor: kBackground,
-          appBarTheme: const AppBarTheme(backgroundColor: kGreen, foregroundColor: Colors.white),
+          appBarTheme: const AppBarTheme(
+              backgroundColor: kGreen, foregroundColor: Colors.white),
           useMaterial3: true,
         ),
         home: const LoginPage(),
